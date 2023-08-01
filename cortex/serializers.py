@@ -24,11 +24,12 @@
 from rest_framework import serializers
 from . import models
 
+
 class DistrictSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = models.district
-        # fields = ('id','name')
         fields = '__all__'
-
-        
+        extra_kwargs = {'name': {
+            'required': True
+            }
+        }

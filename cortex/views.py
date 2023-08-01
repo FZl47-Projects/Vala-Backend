@@ -139,15 +139,16 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 from core import exceptions
-from . import serializers
+from . import serializers, models
 
 
 class District(APIView):
     permission_classes = ()  # TODO: should be complete | Add permission for admin
 
     def get(self,request):
-        # get list or detail => many True or False
-        pass
+        # get list objects
+        districts = models.district.objects.all()
+        return Response(serializers.DistrictSerializer(districts,many=True).data)
 
     def post(self, request):
         # TEMP
