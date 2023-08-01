@@ -3,7 +3,6 @@
 # from rest_framework.response import Response
 
 
-
 # from django import http
 # from django.shortcuts import render
 
@@ -20,7 +19,7 @@
 #     def post(self,request):
 #         serializer = CortexSerializer(data=request.data)
 #         if serializer.is_valid():
-            
+
 #             serializer.save()
 #             return Response(serializer.data, status=status.HTTP_201_CREATED)
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -32,11 +31,11 @@
 #     def post(self,request):
 #         serializer = DistrictSerializer(data=request.data)
 #         if serializer.is_valid():
-            
+
 #             serializer.save()
 #             return Response(serializer.data, status=status.HTTP_201_CREATED)
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        
+
 # class CortexDetail(APIView):
 #     def get_object(self,pk):
 #         try:   
@@ -73,14 +72,12 @@
 #             raise http.Http404
 #     def get(self,request):
 #         params = request.GET
-        
+
 #         queryset=self.get_object(params['id'])   
 #         serializer = GetCortexSerializer(queryset,many=True)
 #         return Response(serializer.data)
-    
-    
-    
-    
+
+
 # class oprator_laserList(APIView):
 #     def get(self,request):
 #         querysert = oprator_Laser.objects.all()
@@ -89,11 +86,11 @@
 #     def post(self,request):
 #         serializer = Oprator_laserSerializer(data=request.data)
 #         if serializer.is_valid():
-            
+
 #             serializer.save()
 #             return Response(serializer.data, status=status.HTTP_201_CREATED)
 #         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
 # class oprator_laserDetail(APIView):
 #     def get_object(self,pk):
 #         try:   
@@ -130,7 +127,7 @@
 #             raise http.Http404
 #     def get(self,request):
 #         params = request.GET
-        
+
 #         queryset=self.get_object(params['id'])   
 #         serializer = Oprator_laserSerializer(queryset,many=True)
 #         return Response(serializer.data)
@@ -144,22 +141,20 @@ from rest_framework.response import Response
 from core import exceptions
 from . import serializers
 
-class District(APIView):
-    permission_classes = () # TODO: should be complete
-                            # Add permission for admin
-    
 
-    def post(self,request):
+class District(APIView):
+    permission_classes = ()  # TODO: should be complete | Add permission for admin
+
+    def get(self,request):
+        # get list or detail => many True or False
+        pass
+
+    def post(self, request):
         # TEMP
         import time
         time.sleep(2)
 
         s = serializers.DistrictSerializer(data=request.data)
         s.is_valid(raise_exception=True)
-        try:
-            obj = s.create(s.validated_data)  
-        except IntegrityError as e:
-            # object exists with this name | name is unique
-            raise exceptions.Conflict('object exists with this name')     
-        return Response(serializers.DistrictSerializer(obj).data,status=status.HTTP_201_CREATED)
-    
+        obj = s.create(s.validated_data)
+        return Response(serializers.DistrictSerializer(obj).data, status=status.HTTP_201_CREATED)
