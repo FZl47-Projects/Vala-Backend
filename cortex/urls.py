@@ -21,5 +21,6 @@ from . import views
 
 app_name = 'cortex'
 urlpatterns = [
-    path('district',views.District.as_view())
+    path('district',views.District.as_view()),
+    path('district/<int:pk>',views.DistrictDetail.as_view()),
 ]

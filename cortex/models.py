@@ -20,4 +20,4 @@ class cortex(models.Model):
 
 
 class district(models.Model):
-    name = models.CharField(max_length=50,unique=True)
+    name = models.CharField(max_length=50)

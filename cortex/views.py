@@ -145,10 +145,10 @@ from . import serializers, models
 class District(APIView):
     permission_classes = ()  # TODO: should be complete | Add permission for admin
 
-    def get(self,request):
+    def get(self, request):
         # get list objects
         districts = models.district.objects.all()
-        return Response(serializers.DistrictSerializer(districts,many=True).data)
+        return Response(serializers.DistrictSerializer(districts, many=True).data)
 
     def post(self, request):
         # TEMP
@@ -156,6 +156,29 @@ class District(APIView):
         time.sleep(2)
 
         s = serializers.DistrictSerializer(data=request.data)
-        s.is_valid(raise_exception=True)
+        try:
+            s.is_valid(raise_exception=True)
+        except Exception as e:
+            raise exceptions.BadRequest
+        district_name = s.validated_data['name']
+        # check for unique district
+        if models.district.objects.filter(name=district_name).exists():
+            raise exceptions.Conflict
         obj = s.create(s.validated_data)
         return Response(serializers.DistrictSerializer(obj).data, status=status.HTTP_201_CREATED)
+
+
+class DistrictDetail(APIView):
+    permission_classes = ()  # TODO: should be complete | Add permission for admin
+
+    def delete(self, request, pk):
+        try:
+            obj = models.district.objects.get(id=pk)
+        except:
+            raise exceptions.NotFound({
+                'district not found with this id'
+            })
+        obj.delete()
+        return Response({
+            'message': 'district deleted successfully !'
+        })
