@@ -148,13 +148,13 @@ class District(APIView):
     def get(self, request):
         # get list objects
         districts = models.district.objects.all()
+        # search
+        search_q = request.GET.get('search',None)
+        if search_q:
+            districts = districts.filter(name__contains=search_q)
         return Response(serializers.DistrictSerializer(districts, many=True).data)
 
     def post(self, request):
-        # TEMP
-        import time
-        time.sleep(2)
-
         s = serializers.DistrictSerializer(data=request.data)
         try:
             s.is_valid(raise_exception=True)
