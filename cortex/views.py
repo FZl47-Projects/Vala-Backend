@@ -171,6 +171,22 @@ class District(APIView):
 class DistrictDetail(APIView):
     permission_classes = ()  # TODO: should be complete | Add permission for admin
 
+    def put(self,request,pk):
+        # get object
+        try:
+            obj = models.district.objects.get(id=pk)
+        except:
+            raise exceptions.NotFound
+        # check new values
+        s = serializers.DistrictSerializer(data=request.data)
+        s.is_valid(raise_exception=True)
+        # check for unique district
+        if models.district.objects.filter(name=s.validated_data['name']).exists():
+            raise exceptions.Conflict
+        # update
+        s.update(obj,s.validated_data)
+        return Response(s.data)
+
     def delete(self, request, pk):
         try:
             obj = models.district.objects.get(id=pk)
