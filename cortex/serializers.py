@@ -31,5 +31,36 @@ class DistrictSerializer(serializers.ModelSerializer):
         fields = '__all__'
         extra_kwargs = {'name': {
             'required': True
-            }
         }
+        }
+
+class OperatorLaserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.oprator_Laser
+        fields = ('id', 'name', 'phonenumber')
+
+
+class CortextUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.user
+        fields = ('name','nationalcode','phone_number')
+
+
+class CortexDistrictSerializer(serializers.ModelSerializer):
+    district = serializers.CharField(read_only=True, source='district.name')
+
+    class Meta:
+        model = models.cortex_district
+        exclude = ('cortext',)
+
+
+class CortexSerializer(serializers.ModelSerializer):
+    districts = CortexDistrictSerializer(source='cortex_district__set', many=True)
+    operator = OperatorLaserSerializer(source='oprator_Laser')
+
+    class Meta:
+        model = models.cortex
+        exclude = ('oprator_Laser',)
+
+
+
