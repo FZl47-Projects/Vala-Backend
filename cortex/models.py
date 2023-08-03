@@ -24,10 +24,10 @@ class district(models.Model):
 # NEW
 # used class name lower case
 # coordinate with the syntax of the rest of the project
-class cortext_district(models.Model):
-    cortext = models.ForeignKey(cortex, on_delete=models.CASCADE)
+class cortex_district(models.Model):
+    cortex = models.ForeignKey(cortex, on_delete=models.CASCADE)
     district = models.ForeignKey(district, on_delete=models.CASCADE)
     intensity_value = models.PositiveBigIntegerField()
 
     def __str__(self):
-        return f'#{self.id} cortext meet - {self.cortext.user.name}'
+        return f'#{self.id} cortext meet - {self.cortex.user.name}'
