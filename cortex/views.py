@@ -134,7 +134,6 @@
 
 
 # NEW
-from django.db import IntegrityError
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
@@ -146,10 +145,13 @@ class District(APIView):
     permission_classes = ()  # TODO: should be complete | Add permission for admin
 
     def get(self, request):
+        import time
+        time.sleep(1)
+
         # get list objects
         districts = models.district.objects.all()
         # search
-        search_q = request.GET.get('search',None)
+        search_q = request.GET.get('search', None)
         if search_q:
             districts = districts.filter(name__contains=search_q)
         return Response(serializers.DistrictSerializer(districts, many=True).data)
@@ -171,7 +173,7 @@ class District(APIView):
 class DistrictDetail(APIView):
     permission_classes = ()  # TODO: should be complete | Add permission for admin
 
-    def put(self,request,pk):
+    def put(self, request, pk):
         # get object
         try:
             obj = models.district.objects.get(id=pk)
@@ -184,7 +186,7 @@ class DistrictDetail(APIView):
         if models.district.objects.filter(name=s.validated_data['name']).exists():
             raise exceptions.Conflict
         # update
-        s.update(obj,s.validated_data)
+        s.update(obj, s.validated_data)
         return Response(s.data)
 
     def delete(self, request, pk):
@@ -198,3 +200,61 @@ class DistrictDetail(APIView):
         return Response({
             'message': 'district deleted successfully !'
         })
+
+
+class CortextUser(APIView):
+    permission_classes = ()  # TODO: should be complete | Add permission for admin
+
+    # TEST
+    def create_user(self):
+        return models.user.objects.get_or_create(defaults={'name':'Fazel Momeni'},
+            name='Fazel Momeni',
+            phone_number='09130009999',
+            age=19,
+            weight=55,
+            height=180,
+            nationalcode=3300330033,
+            password='its_joke',
+            birthday='2020-01-1',
+            wallet=0
+        )
+
+    def get(self, request,user_id):
+        # TEST
+        import time
+        time.sleep(1)
+        user_id = models.user.objects.first().id
+
+        if not user_id:
+            raise exceptions.BadRequest({
+                'detail': 'user-id param is not valid'
+            })
+        try:
+            user_obj = models.user.objects.get(id=user_id)
+        except models.user.DoesNotExist:
+            raise exceptions.NotFound
+        cortexes = user_obj.cortex_set.all()
+        cortexes_data = serializers.CortexSerializer(cortexes,many=True).data
+        user_data = serializers.CortextUserSerializer(user_obj).data
+        context = {
+            'cortexes':cortexes_data,
+            'user':user_data
+        }
+        return Response(context)
+
+
+class Operator(APIView):
+    permission_classes = ()  # TODO: should be complete | Add permission for admin
+
+    # TEST
+    def create_operator(self):
+        return models.oprator_Laser.objects.create(
+            name='Dr Fereshte Ghasemi',
+            phonenumber='09103011010'
+        )
+
+    def get(self, request):
+        operators = models.oprator_Laser.objects.all()
+        return Response(serializers.OperatorLaserSerializer(operators,many=True).data)
+
+
