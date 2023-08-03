@@ -23,4 +23,8 @@ app_name = 'cortex'
 urlpatterns = [
     path('district',views.District.as_view()),
     path('district/<int:pk>',views.DistrictDetail.as_view()),
+
+    path('user/<int:user_id>',views.CortextUser.as_view()),
+
+    path('operator',views.Operator.as_view()),
 ]
