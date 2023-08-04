@@ -27,4 +27,8 @@ urlpatterns = [
     path('user/<int:user_id>',views.CortextUser.as_view()),
 
     path('operator',views.Operator.as_view()),
+
+    path('',views.Cortex.as_view()),
+    path('<cortex_id>',views.CortexDetail.as_view()),
+    path('<cortex_id>/district/<int:district_id>',views.CortexDistrictDetail.as_view()),
 ]

@@ -47,20 +47,23 @@ class CortextUserSerializer(serializers.ModelSerializer):
 
 
 class CortexDistrictSerializer(serializers.ModelSerializer):
-    district = serializers.CharField(read_only=True, source='district.name')
+    district_name = serializers.CharField(read_only=True, source='district.name')
 
     class Meta:
         model = models.cortex_district
-        exclude = ('cortext',)
+        exclude = ('cortex',)
 
 
 class CortexSerializer(serializers.ModelSerializer):
-    districts = CortexDistrictSerializer(source='cortex_district__set', many=True)
-    operator = OperatorLaserSerializer(source='oprator_Laser')
+    districts = CortexDistrictSerializer(source='cortex_district_set', many=True)
+    operator = OperatorLaserSerializer(source='oprator_Las')
+    created = serializers.DateTimeField(format="%Y-%m-%d %H:%M")
 
     class Meta:
         model = models.cortex
-        exclude = ('oprator_Laser',)
+        exclude = ('oprator_Las',)
+
+
 
 
 

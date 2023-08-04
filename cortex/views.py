@@ -207,23 +207,22 @@ class CortextUser(APIView):
 
     # TEST
     def create_user(self):
-        return models.user.objects.get_or_create(defaults={'name':'Fazel Momeni'},
-            name='Fazel Momeni',
-            phone_number='09130009999',
-            age=19,
-            weight=55,
-            height=180,
-            nationalcode=3300330033,
-            password='its_joke',
-            birthday='2020-01-1',
-            wallet=0
-        )
+        return models.user.objects.get_or_create(defaults={'name': 'Fazel Momeni'},
+                                                 name='Fazel Momeni',
+                                                 phone_number='09130009999',
+                                                 age=19,
+                                                 weight=55,
+                                                 height=180,
+                                                 nationalcode=3300330033,
+                                                 password='its_joke',
+                                                 birthday='2020-01-1',
+                                                 wallet=0
+                                                 )
 
-    def get(self, request,user_id):
+    def get(self, request, user_id):
         # TEST
-        import time
-        time.sleep(1)
         user_id = models.user.objects.first().id
+
 
         if not user_id:
             raise exceptions.BadRequest({
@@ -234,11 +233,11 @@ class CortextUser(APIView):
         except models.user.DoesNotExist:
             raise exceptions.NotFound
         cortexes = user_obj.cortex_set.all()
-        cortexes_data = serializers.CortexSerializer(cortexes,many=True).data
+        cortexes_data = serializers.CortexSerializer(cortexes, many=True).data
         user_data = serializers.CortextUserSerializer(user_obj).data
         context = {
-            'cortexes':cortexes_data,
-            'user':user_data
+            'cortexes': cortexes_data,
+            'user': user_data
         }
         return Response(context)
 
@@ -255,6 +254,62 @@ class Operator(APIView):
 
     def get(self, request):
         operators = models.oprator_Laser.objects.all()
-        return Response(serializers.OperatorLaserSerializer(operators,many=True).data)
+        return Response(serializers.OperatorLaserSerializer(operators, many=True).data)
 
 
+class Cortex(APIView):
+
+    def post(self, request):
+        data = request.data
+        if not data:
+            raise exceptions.BadRequest
+        is_new = data.get('is_new',True)
+        if not is_new:
+            raise exceptions.Conflict
+        districts = data.get('cortexes', None)
+        if isinstance(districts, list) is False:
+            raise exceptions.BadRequest
+
+        operator_id = data.get('operator', 0)
+        user_id = data.get('user_id',0)
+        try:
+            cortex = models.cortex.objects.create(user_id=user_id,oprator_Las_id=operator_id)
+        except:
+            raise exceptions.BadRequest({
+                'detail':'enter user_id and operator_id correctly'
+            })
+
+        for district in districts:
+            models.cortex_district.objects.create(
+                cortex=cortex,
+                district_id=district['id'],
+                intensity_value=district['intensity_value']
+            )
+
+        return Response(serializers.CortexSerializer(cortex).data)
+
+
+class CortexDetail(APIView):
+
+    def delete(self, request, cortex_id):
+        try:
+            obj = models.cortex.objects.get(id=cortex_id)
+            obj.delete()
+        except:
+            raise exceptions.NotFound
+        return Response({
+            'message': 'cortex object deleted successfully!'
+        })
+
+
+class CortexDistrictDetail(APIView):
+
+    def delete(self, request, cortex_id, district_id):
+        try:
+            obj = models.cortex_district.objects.get(cortex_id=cortex_id, district_id=district_id)
+            obj.delete()
+        except:
+            raise exceptions.NotFound
+        return Response({
+            'message': 'cortex district object deleted successfully!'
+        })
