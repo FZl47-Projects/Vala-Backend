@@ -142,7 +142,6 @@ from . import serializers, models
 
 
 class District(APIView):
-    permission_classes = ()  # TODO: should be complete | Add permission for admin
 
     def get(self, request):
         import time
@@ -171,7 +170,6 @@ class District(APIView):
 
 
 class DistrictDetail(APIView):
-    permission_classes = ()  # TODO: should be complete | Add permission for admin
 
     def put(self, request, pk):
         # get object
@@ -203,7 +201,6 @@ class DistrictDetail(APIView):
 
 
 class CortextUser(APIView):
-    permission_classes = ()  # TODO: should be complete | Add permission for admin
 
     # TEST
     def create_user(self):
@@ -243,7 +240,6 @@ class CortextUser(APIView):
 
 
 class Operator(APIView):
-    permission_classes = ()  # TODO: should be complete | Add permission for admin
 
     # TEST
     def create_operator(self):
